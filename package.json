@@ -2,6 +2,7 @@
   "name": "orangehrm",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {},
   "keywords": [],
   "author": "",
@@ -10,5 +11,8 @@
   "devDependencies": {
     "@playwright/test": "^1.58.0",
     "@types/node": "^25.0.10"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
   }
 }
