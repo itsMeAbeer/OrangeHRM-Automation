@@ -7,14 +7,14 @@ export class PIM{
         this.firstNameBox = page.getByRole('textbox', { name: 'First Name' });
         this.middleNameBox = page.getByRole('textbox', { name: 'Middle Name' });
         this.lastNameBox = page.getByRole('textbox', { name: 'Last Name' });
-        this.employeeID = page.locator('//input[@class="oxd-input oxd-input--active"]').nth(1);
+        this.employeeID = page.locator('//div[@class="oxd-input-group oxd-input-field-bottom-space"]//input').nth(4);
         this.idError = page.locator('//span').filter({ hasText: 'Employee Id already exists' });
         this.saveButton = page.getByRole('button', { name: 'Save' });
         this.addImageButton = page.locator('//i[@class="oxd-icon bi-plus"]');
         this.loginDetailsButton = page.locator('//span[@class="oxd-switch-input oxd-switch-input--active --label-right"]');
-        this.usernameBox = page.locator('//div[@class="oxd-form-row"]//input[@class="oxd-input oxd-input--active"]').nth(1);
-        this.passwordBox = page.locator('//div[@class="oxd-form-row user-password-row"]//input[@class="oxd-input oxd-input--active"]').nth(0);
-        this.confirmPasswordBox = page.locator('//div[@class="oxd-form-row user-password-row"]//input[@class="oxd-input oxd-input--active"]').nth(1);
+        this.usernameBox = page.locator('//div[@class="oxd-input-group oxd-input-field-bottom-space"]//input').nth(5);
+        this.passwordBox = page.locator('//div[@class="oxd-input-group oxd-input-field-bottom-space"]//input').nth(8);
+        this.confirmPasswordBox = page.locator('//div[@class="oxd-input-group oxd-input-field-bottom-space"]//input').nth(9);
         this.employeeName = page.locator('//h6[@class="oxd-text oxd-text--h6 --strong"]');
         this.activeTab = page.locator('//a[@class="orangehrm-tabs-item --active"]');
         this.license = page.locator('//input[@class="oxd-input oxd-input--active"]').nth(3);
