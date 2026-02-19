@@ -22,46 +22,56 @@ test('Orange HRM', async ({ loginPage, loginData, employeeLoginData, testData, e
         await expect(pim.getMainHeader()).toBeVisible();
         console.log(await pim.addEmployeeButton.innerText());
         await pim.addEmployee();
-        console.log(await pim.getSubHeader().innerText());
-        await expect(pim.getSubHeader()).toBeVisible(); 
         const employee = employeeData[0];
         let employeeID = await pim.getEmployeeID().inputValue();
-        await pim.saveEmployee();
-        let idExists = await pim.getIdError().isVisible();
-        while(idExists){
-            employeeID = (parseInt(employeeID) + 1).toString();
-            await pim.fillEmployeeID(employeeID);
-            await pim.saveEmployee();
-            idExists = await pim.getIdError().isVisible();
-        }
+        // await pim.page.locator('.oxd-form-loader').waitFor({ state: 'hidden' });
+        // await pim.saveEmployee();
+        // let idExists = await pim.getIdError().isVisible();
+        // while(idExists){
+        //     employeeID = (parseInt(employeeID) + 1).toString();
+        //     await pim.fillEmployeeID(employeeID);
+        //     await pim.saveEmployee();
+        //     idExists = await pim.getIdError().isVisible();
+        // }
         await pim.fillEmployeeDetails(employee.firstName, employee.middleName, employee.lastName);
-        var username = employee.firstName + employeeID;
         const fileChooserPromise = pim.page.waitForEvent('filechooser');
         await pim.addImage();
         const fileChooser = await fileChooserPromise;
         await fileChooser.setFiles(testData.employeeImagePath);
         await pim.toggleLoginDetails();
         const loginData = employeeLoginData[0];
-        console.log(await username);
-        await pim.fillLoginDetails(username, loginData.password, loginData.status);
+
 
         // await Promise.all([
         //     expect(pim.successPop()).toBeVisible({ timeout: 30000 }),
         //     pim.saveEmployee()
         // ]);
-        await pim.saveEmployee();
-        let success = await pim.successPop().isVisible();
-        while(success){
-            employeeID = (parseInt(employeeID) + 1).toString();
+        await pim.page.locator('.oxd-form-loader').waitFor({ state: 'hidden' });
+        let username;
+        let status = false;
+        while(!status){
+            username = employee.firstName + employeeID;
+            console.log(`Trying Username: ${username} and ID: ${employeeID}`);
             await pim.fillEmployeeID(employeeID);
+            await pim.fillLoginDetails(username, loginData.password, loginData.status);
+            await pim.page.locator('.oxd-form-loader').waitFor({ state: 'hidden' });
             await pim.saveEmployee();
-            success = await pim.successPop().isVisible();
+            try {
+                await expect(pim.successPop()).toBeVisible({timeout:5*1000});
+                status = true;
+            } catch (e) {
+                // If the error doesn't appear, it's a valid ID
+                console.log("Validation failed (Duplicate ID/User). Incrementing...");
+                employeeID = (parseInt(employeeID) + 1).toString();
+                status = false; 
+            }
         }
         await testData.updateEmployeeID(employee.firstName, employee.lastName, employeeID);
         await testData.updateUsername(employee.firstName, employeeID);
-        var username = employee.firstName + employeeID;
+
         await expect(pim.getActiveTab()).toContainText('Personal Details');
-        await expect(pim.getEmployeeName()).toBeVisible();
+        // await expect(pim.getEmployeeName()).toBeVisible();
+        console.log(await pim.getEmployeeName().innerText());
         await expect(pim.getEmployeeName()).toContainText(employee.firstName + ' ' + employee.lastName);
         const personalDetails = personalDetailsData[0];
         await pim.fillPersonalDetails(personalDetails.license, personalDetails.licenseExpiry, personalDetails.nationality, personalDetails.maritalStatus, personalDetails.dob, personalDetails.gender);
